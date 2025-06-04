@@ -47,7 +47,7 @@ class Review:
         """ Insert a new row with the year, summary, and employee id values of the current Review object.
         Update object id attribute using the primary key value of new row.
         Save the object in local dictionary using table row's PK as dictionary key"""
-        
+
         if self.id is None:
             CURSOR.execute("""
                 INSERT INTO reviews (year, summary, employee_id)
@@ -62,7 +62,10 @@ class Review:
     @classmethod
     def create(cls, year, summary, employee_id):
         """ Initialize a new Review instance and save the object to the database. Return the new instance. """
-        pass
+        
+        review = cls(year, summary, employee_id)
+        review.save()
+        return review
    
     @classmethod
     def instance_from_db(cls, row):

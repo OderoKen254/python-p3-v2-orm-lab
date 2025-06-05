@@ -47,11 +47,6 @@ class Review:
         Review._all[self.id] = self
 
     @classmethod
-    # def create(cls, year, summary, employee_id):
-    #     review = cls(year, summary, employee_id)
-    #     review.save()
-    #     return review
-
     def create(cls, year, summary, employee_id):
         if not isinstance(summary, str) or not summary.strip():
             raise ValueError("Summary cannot be empty or just whitespace")

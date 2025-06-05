@@ -186,6 +186,7 @@ class Employee:
         return cls.instance_from_db(row) if row else None
 
     def reviews(self):
+        from review import Review
         """Return list of reviews associated with current employee"""
         # Corrected Section Start: Implement the reviews method to fetch reviews for this employee
         sql = """

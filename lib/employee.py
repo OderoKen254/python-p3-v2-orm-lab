@@ -1,6 +1,6 @@
 import sqlite3
-from lib.department import Department
-from lib.review import Review
+from department import Department
+from review import Review
 
 class Employee:
     _all = {}

@@ -5,9 +5,9 @@ class Review:
     _all = {}
 
     def __init__(self, year, summary, employee_id, id=None):
-        self._year = year
-        self._summary = summary
-        self._employee_id = employee_id
+        self.year = year
+        self.summary = summary
+        self.employee_id = employee_id
         self.id = id
 
     def __repr__(self):
@@ -47,7 +47,19 @@ class Review:
         Review._all[self.id] = self
 
     @classmethod
+    # def create(cls, year, summary, employee_id):
+    #     review = cls(year, summary, employee_id)
+    #     review.save()
+    #     return review
+
     def create(cls, year, summary, employee_id):
+        if not isinstance(summary, str) or not summary.strip():
+            raise ValueError("Summary cannot be empty or just whitespace")
+
+        employee = Employee.find_by_id(employee_id)
+        if not employee:
+            raise ValueError("Employee ID must correspond to an existing Employee in the database")
+
         review = cls(year, summary, employee_id)
         review.save()
         return review
@@ -57,10 +69,8 @@ class Review:
         if row is None:
             return None
         review_id, year, summary, employee_id = row
-        if review_id in cls._all:
-            return cls._all[review_id]
-        review = cls(year, summary, employee_id, review_id)
-        cls._all[review.id] = review
+        review = cls(year, summary, employee_id, id=review_id)
+        cls._all[review_id] = review
         return review
 
     @classmethod

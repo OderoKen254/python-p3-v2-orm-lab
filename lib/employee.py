@@ -187,4 +187,13 @@ class Employee:
 
     def reviews(self):
         """Return list of reviews associated with current employee"""
-        pass
+        # Corrected Section Start: Implement the reviews method to fetch reviews for this employee
+        sql = """
+            SELECT *
+            FROM reviews
+            WHERE employee_id = ?
+        """
+        CURSOR.execute(sql, (self.id,))
+        rows = CURSOR.fetchall()
+        return [Review.instance_from_db(row) for row in rows] if rows else []
+        # Corrected Section End: Returns a list of Review instances or an empty list if none found

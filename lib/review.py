@@ -2,7 +2,6 @@ import sqlite3
 from lib.employee import Employee
 
 class Review:
-    # Class-level dictionary to cache Review instances
     _all = {}
 
     def __init__(self, year, summary, employee_id, id=None):
@@ -36,7 +35,6 @@ class Review:
         CURSOR.execute(sql)
         CONN.commit()
 
-    # ORM Methods
     def save(self):
         from lib.__init__ import CONN, CURSOR
         sql = """
@@ -56,12 +54,12 @@ class Review:
 
     @classmethod
     def instance_from_db(cls, row):
-        review_id = row[0]
-        # Check if instance exists in dictionary
+        if row is None:
+            return None
+        review_id, year, summary, employee_id = row
         if review_id in cls._all:
             return cls._all[review_id]
-        # Create new instance and add to dictionary
-        review = cls(row[1], row[2], row[3], row[0])
+        review = cls(year, summary, employee_id, review_id)
         cls._all[review.id] = review
         return review
 
@@ -88,7 +86,6 @@ class Review:
         sql = "DELETE FROM reviews WHERE id = ?"
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
-        # Remove from dictionary and reset id
         if self.id in Review._all:
             del Review._all[self.id]
         self.id = None
@@ -101,7 +98,6 @@ class Review:
         rows = CURSOR.fetchall()
         return [cls.instance_from_db(row) for row in rows]
 
-    # Property Methods
     @property
     def year(self):
         return self._year
@@ -123,7 +119,7 @@ class Review:
         if not isinstance(value, str):
             raise ValueError("Summary must be a string")
         if not value.strip():
-            raise ValueError("Summary cannot be empty")
+            raise ValueError("Summary cannot be empty or just whitespace")
         self._summary = value
 
     @property
@@ -132,7 +128,6 @@ class Review:
 
     @employee_id.setter
     def employee_id(self, value):
-        # Check if employee_id corresponds to a persisted Employee
         employee = Employee.find_by_id(value)
         if not employee:
             raise ValueError("Employee ID must correspond to an existing Employee in the database")
